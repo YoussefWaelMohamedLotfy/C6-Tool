@@ -1,0 +1,25 @@
+{
+  "testName": "MyAPILoadTest",
+  "targetUrl": "http://localhost:5219/todos",
+  "method": "GET",
+  "payload": [],
+  "timeoutMs": 2000,
+  "sleepMs": 1000,
+  "stages": [
+    {
+      "duration": "1m",
+      "target": 500
+    },
+    {
+      "duration": "10m",
+      "target": 500
+    },
+    {
+      "duration": "1m",
+      "target": 0
+    }
+  ],
+  "headers": {
+    "Accept": "application/json"
+  }
+}

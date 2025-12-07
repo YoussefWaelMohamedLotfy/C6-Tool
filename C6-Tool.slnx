@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/C6/C6.csproj" />
+  </Folder>
+  <Folder Name="/src/Samples/">
+    <Project Path="src/Samples/C6-Sample-API/C6-Sample-API.csproj" />
+  </Folder>
+</Solution>
