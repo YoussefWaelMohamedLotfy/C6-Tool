@@ -1,5 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
+using C6.Converters;
+
+using Microsoft.AspNetCore.Http;
+
 namespace C6.Models;
 
 public sealed record TestScenario
@@ -17,8 +21,9 @@ public sealed record TestScenario
     public int SleepMs { get; set; }
     
     public Stage[] Stages { get; set; }
-    
-    public Dictionary<string, string> Headers { get; set; }
+
+    [JsonConverter(typeof(HeaderDictionaryJsonConverter))]
+    public HeaderDictionary Headers { get; set; }
 }
 
 public sealed record Stage
