@@ -23,7 +23,7 @@ public sealed record TestScenario
 
 public sealed record Stage
 {
-    public string Duration { get; set; }
+    public Duration Duration { get; set; }
     
     public int Target { get; set; }
 }
