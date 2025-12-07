@@ -1,0 +1,40 @@
+name: .NET Deploy C6 CLI Tool with NativeAOT
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+    
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --no-restore
+    
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+
+    - name: Test NativeAOT Publish
+      run: dotnet publish "src/C6/C6.csproj" -o "src/C6/bin/publish"
+
+    - name: Upload C6 CLI artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: C6
+        path: src/C6/bin/publish
