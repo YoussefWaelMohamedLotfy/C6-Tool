@@ -1,21 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using C6.Models;
+using C6.Services;
+
+using ConsoleAppFramework;
 
 namespace C6.Commands;
 
 internal sealed class C6Commands
 {
     /// <summary>
-    /// Run a test based on JSON config path or params
+    /// Run a simple test based on params
     /// </summary>
     /// <param name="connections">-c, Number of Concurrent Connections</param>
     /// <param name="numberOfRequests">-n, Number of Requests</param>
     /// <param name="url">-u, URL of Server Endpoint</param>
     /// <param name="filePath">-f, Path of File</param>
     /// <param name="ct"></param>
-    public void Run(int connections = 0, int numberOfRequests = 0, string url = "", string filePath = "", CancellationToken ct = default)
+    public void Run([Argument] string url, int connections = 0, int numberOfRequests = 0, string filePath = "", CancellationToken ct = default)
     {
         Console.WriteLine($"{connections} - {numberOfRequests} - {url} - {(string.IsNullOrEmpty(filePath) ? "No path" : "filepath")}");
+    }
+
+    /// <summary>
+    /// Run a test based on JSON config path
+    /// </summary>
+    /// <param name="filePath">-f, Path of File</param>
+    /// <param name="ct"></param>
+    public async Task RunFile([Argument] string filePath, [FromServices] ConfigurationLoader configLoader, CancellationToken ct)
+    {
+        TestScenario scenario = await configLoader.LoadAsync(filePath, ct);
     }
 }

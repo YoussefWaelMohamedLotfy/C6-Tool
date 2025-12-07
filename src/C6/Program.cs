@@ -1,8 +1,10 @@
 ﻿using C6.Commands;
 using C6.Filters;
+using C6.Services;
 
 using ConsoleAppFramework;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using ZLogger;
@@ -22,10 +24,12 @@ ConsoleApp.ConsoleAppBuilder app = ConsoleApp.Create()
         x.AddZLoggerConsole();
         //x.AddZLoggerFile("log.txt");
     })
-    .ConfigureServices(service =>
+    .ConfigureServices(services =>
     {
+        services.AddSingleton<ConfigurationLoader>();
     });
 
 app.UseFilter<LogRunningTimeFilter>();
 app.Add<C6Commands>();
+
 await app.RunAsync(args);
