@@ -1,16 +1,13 @@
 ﻿using C6.Commands;
 using C6.Filters;
 using C6.Services;
-
 using ConsoleAppFramework;
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-
 using ZLogger;
 
-ConsoleApp.Version = "1.0.0";
-ConsoleApp.ConsoleAppBuilder app = ConsoleApp.Create()
+ConsoleApp.ConsoleAppBuilder app = ConsoleApp
+    .Create()
     .ConfigureLogging(x =>
     {
         x.ClearProviders();
@@ -27,6 +24,8 @@ ConsoleApp.ConsoleAppBuilder app = ConsoleApp.Create()
     .ConfigureServices(services =>
     {
         services.AddSingleton<ConfigurationLoader>();
+        services.AddScoped<LoadCoordinator>();
+        services.AddScoped<MetricsCollector>();
     });
 
 app.UseFilter<LogRunningTimeFilter>();
