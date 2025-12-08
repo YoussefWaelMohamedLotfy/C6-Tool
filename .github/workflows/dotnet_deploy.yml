@@ -37,7 +37,7 @@ jobs:
 
     - name: Versioning
       id: versionize
-      run: versionize --changelog-all --skip-dirty
+      run: dotnet versionize changelog
       continue-on-error: true
 
     - name: No release required check
