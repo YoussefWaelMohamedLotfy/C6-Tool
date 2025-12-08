@@ -35,21 +35,18 @@ jobs:
     - name: Install Versionize
       run: dotnet tool install -g Versionize
 
-    - name: Versioning
+    - name: Versioning C6 & Git Configuration
       id: versionize
       run: |
         dotnet tool restore
+        git config --local user.email "youssefwael8@email.com"
+        git config --local user.name "YoussefWaelMohamedLotfy"
         dotnet versionize changelog
       continue-on-error: true
 
     - name: No release required check
       if: steps.versionize.outcome != 'success'
       run: echo "Skipping Release. No release required."
-
-    - name: Setup git
-      run: |
-        git config --local user.email "youssefwael8@email.com"
-        git config --local user.name "YoussefWaelMohamedLotfy"
         
     - name: Push changes to GitHub
       if: steps.versionize.outcome == 'success'
