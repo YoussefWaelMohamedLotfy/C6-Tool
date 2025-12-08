@@ -37,7 +37,9 @@ jobs:
 
     - name: Versioning
       id: versionize
-      run: dotnet versionize changelog
+      run: |
+        dotnet tool restore
+        dotnet versionize changelog
       continue-on-error: true
 
     - name: No release required check
