@@ -4,7 +4,7 @@
   "method": "GET",
   "payload": [],
   "timeoutMs": 2000,
-  "sleepMs": 1000,
+  "sleepMs": 10,
   "stages": [
     {
       "duration": "1m",

@@ -1,29 +1,26 @@
 ﻿using System.Diagnostics;
 using C6.Services;
-using Microsoft.AspNetCore.Http;
 
 namespace C6.Models;
 
 public sealed class VirtualUser(
-    TestScenario _config,
-    MetricsCollector _collector,
-    HttpClient _httpClient
+    TestScenario config,
+    MetricsCollector collector,
+    IHttpClientFactory httpClientFactory
 )
 {
-    // ... (Fields and Constructor) ...
-
-    // Now accepts a CancellationToken to allow the Coordinator to stop it.
     public async Task StartLoopAsync(CancellationToken cancellationToken)
     {
-        var targetUri = new Uri(_config.TargetUrl);
-        HttpMethod method = MapHttpMethod(_config.Method);
-
-        // Set up the timeout for this individual VU
-        _httpClient.Timeout = TimeSpan.FromMilliseconds(_config.TimeoutMs);
+        var targetUri = new Uri(config.TargetUrl);
+        HttpMethod method = MapHttpMethod(config.Method);
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            var request = new HttpRequestMessage(method, targetUri);
+            using HttpClient httpClient = httpClientFactory.CreateClient("C6");
+
+            // Set up the timeout for this individual VU
+            httpClient.Timeout = TimeSpan.FromMilliseconds(config.TimeoutMs);
+            using var request = new HttpRequestMessage(method, targetUri);
 
             // ... (Apply headers, apply optional payload) ...
 
@@ -32,13 +29,13 @@ public sealed class VirtualUser(
 
             try
             {
-                var response = await _httpClient.SendAsync(request, cancellationToken);
+                var response = await httpClient.SendAsync(request, cancellationToken);
                 stopwatch.Stop();
 
                 var isError = !(response.IsSuccessStatusCode);
 
                 // Record the result
-                _collector.Record(
+                collector.Record(
                     new RequestMetrics(
                         stopwatch.ElapsedMilliseconds, //Stopwatch.GetElapsedTime(startTime).Milliseconds
                         (int)response.StatusCode,
@@ -55,13 +52,13 @@ public sealed class VirtualUser(
             {
                 // Handle network errors, timeouts, etc.
                 stopwatch.Stop();
-                _collector.Record(new RequestMetrics(stopwatch.ElapsedMilliseconds, 0, true));
+                collector.Record(new RequestMetrics(stopwatch.ElapsedMilliseconds, 0, true));
             }
 
             // VU sleeps for the configured time before looping again
-            if (_config.SleepMs > 0)
+            if (config.SleepMs > 0)
             {
-                await Task.Delay(_config.SleepMs, cancellationToken);
+                await Task.Delay(config.SleepMs, cancellationToken);
             }
         }
     }

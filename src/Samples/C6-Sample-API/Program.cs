@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-
+using C6_Sample_API;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(args);
@@ -21,22 +21,54 @@ List<Todo> sampleTodos =
     new(2, "Do the dishes", DateOnly.FromDateTime(DateTime.Now)),
     new(3, "Do the laundry", DateOnly.FromDateTime(DateTime.Now.AddDays(1))),
     new(4, "Clean the bathroom"),
-    new(5, "Clean the car", DateOnly.FromDateTime(DateTime.Now.AddDays(2)))
+    new(5, "Clean the car", DateOnly.FromDateTime(DateTime.Now.AddDays(2))),
 ];
 
-var todosApi = app.MapGroup("/todos");
-todosApi.MapGet("/", () => sampleTodos)
-        .WithName("GetTodos");
+int TotalNumberOfRequests = 0;
 
-todosApi.MapGet("/{id}", Results<Ok<Todo>, NotFound> (int id) =>
-    sampleTodos.FirstOrDefault(a => a.Id == id) is { } todo
-        ? TypedResults.Ok(todo)
-        : TypedResults.NotFound())
+var todosApi = app.MapGroup("/todos");
+todosApi
+    .MapGet(
+        "/",
+        () =>
+        {
+            app.Logger.LogInformation(
+                "Fetching all todos - Total Requests: {TotalRequests}",
+                Interlocked.Increment(ref TotalNumberOfRequests)
+            );
+            return sampleTodos;
+        }
+    )
+    .WithName("GetTodos");
+
+todosApi
+    .MapGet(
+        "/{id}",
+        Results<Ok<Todo>, NotFound> (int id) =>
+        {
+            app.Logger.LogInformation(
+                "Fetching todo with ID {TodoId} - Total Requests: {TotalRequests}",
+                id,
+                Interlocked.Increment(ref TotalNumberOfRequests)
+            );
+            return sampleTodos.FirstOrDefault(a => a.Id == id) is { } todo
+                ? TypedResults.Ok(todo)
+                : TypedResults.NotFound();
+        }
+    )
     .WithName("GetTodoById");
 
 await app.RunAsync();
 
-public sealed record Todo(int Id, string? Title, DateOnly? DueBy = null, bool IsComplete = false);
+namespace C6_Sample_API
+{
+    public sealed record Todo(
+        int Id,
+        string? Title,
+        DateOnly? DueBy = null,
+        bool IsComplete = false
+    );
 
-[JsonSerializable(typeof(List<Todo>))]
-internal sealed partial class AppJsonSerializerContext : JsonSerializerContext;
+    [JsonSerializable(typeof(List<Todo>))]
+    internal sealed partial class AppJsonSerializerContext : JsonSerializerContext;
+}

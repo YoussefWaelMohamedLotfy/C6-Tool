@@ -24,8 +24,9 @@ ConsoleApp.ConsoleAppBuilder app = ConsoleApp
     .ConfigureServices(services =>
     {
         services.AddSingleton<ConfigurationLoader>();
+        services.AddSingleton<MetricsCollector>();
         services.AddScoped<LoadCoordinator>();
-        services.AddScoped<MetricsCollector>();
+        services.AddHttpClient("C6");
     });
 
 app.UseFilter<LogRunningTimeFilter>();
