@@ -2,6 +2,8 @@ name: .NET Deploy C6 CLI Tool with NativeAOT
 
 on:
   push:
+    tags:
+      - "v*.*.*"
     branches:
     - main
   pull_request:
@@ -56,7 +58,7 @@ jobs:
         branch: ${{ github.ref }}
         tags: true
 
-    - name: "Create release"
+    - name: Create new Release
       if: steps.versionize.outcome == 'success'
       uses: actions/github-script@v8
       with:
