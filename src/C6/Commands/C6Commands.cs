@@ -35,16 +35,14 @@ internal sealed class C6Commands
     public async Task RunFile(
         [Argument] string filePath,
         [FromServices] ConfigurationLoader configLoader,
-        [FromServices] IHttpClientFactory httpClientFactory,
         [FromServices] LoadCoordinator coordinator,
         [FromServices] MetricsCollector collector,
         CancellationToken ct
     )
     {
-        using HttpClient httpClient = httpClientFactory.CreateClient("C6");
 
         TestScenario scenario = await configLoader.LoadAsync(filePath, ct);
-        await coordinator.RunTestAsync(scenario);
+        await coordinator.RunTestAsync(scenario, ct);
         AggregatedResults results = MetricsAggregator.Aggregate(collector.TestResults);
         ConsoleReporter.Report(scenario, results);
     }
