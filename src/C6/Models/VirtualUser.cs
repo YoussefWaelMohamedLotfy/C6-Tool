@@ -18,7 +18,6 @@ public sealed class VirtualUser(
         {
             using HttpClient httpClient = httpClientFactory.CreateClient("C6");
 
-            // Set up the timeout for this individual VU
             httpClient.Timeout = TimeSpan.FromMilliseconds(config.TimeoutMs);
             using var request = new HttpRequestMessage(method, targetUri);
 
@@ -34,7 +33,6 @@ public sealed class VirtualUser(
 
                 var isError = !(response.IsSuccessStatusCode);
 
-                // Record the result
                 collector.Record(
                     new RequestMetrics(
                         stopwatch.ElapsedMilliseconds, //Stopwatch.GetElapsedTime(startTime).Milliseconds
@@ -45,12 +43,10 @@ public sealed class VirtualUser(
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
-                // The coordinator requested shutdown, exit loop gracefully.
                 return;
             }
             catch (Exception ex)
             {
-                // Handle network errors, timeouts, etc.
                 stopwatch.Stop();
                 collector.Record(new RequestMetrics(stopwatch.ElapsedMilliseconds, 0, true));
             }
@@ -63,7 +59,7 @@ public sealed class VirtualUser(
         }
     }
 
-    private HttpMethod MapHttpMethod(C6HttpMethod method)
+    private static HttpMethod MapHttpMethod(C6HttpMethod method)
     {
         return method switch
         {
