@@ -1,19 +1,19 @@
 <Project>
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
 
-        <AnalysisLevel>latest-all</AnalysisLevel>
-        <AnalysisMode>all</AnalysisMode>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <AnalysisMode>all</AnalysisMode>
 
-        <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
-    </PropertyGroup>
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.16.1.129956">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.18.0.131500">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 </Project>
